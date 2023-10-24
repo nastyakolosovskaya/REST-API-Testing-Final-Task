@@ -12,7 +12,7 @@ public class TokenSingleton {
     private static String SINGLETON_READ;
     private static String SINGLETON_WRITE;
 
-    private static HttpAuthenticateClient httpAuthenticateClient = new HttpAuthenticateClient();
+    private static final HttpAuthenticateClient httpAuthenticateClient = new HttpAuthenticateClient();
 
 
     public static HttpAuthenticationResponse initialize() {
