@@ -1,6 +1,5 @@
-package storageApp.helpers;
+package storageApp.Helpers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
@@ -13,24 +12,24 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import storageApp.data.HttpAuthenticationResponse;
+import storageApp.Data.HttpAuthenticationResponse;
+import storageApp.Utilities.AuthenticationResponseUtility;
 
-import java.io.InputStream;
 import java.net.*;
-
 public class HttpAuthenticateClient {
-
-    String username = "0oa157tvtugfFXEhU4x7";
-    String password = "X7eBCXqlFC7x-mjxG5H91IRv_Bqe1oq7ZwXNA8aq";
-    String host = "localhost";
-    int port = 4044;
 
     @SneakyThrows
     public HttpAuthenticationResponse getHttpConnection(String value) {
 
-        HttpPost httppost = new HttpPost("http://localhost:4044/oauth/token");
+        PropertyReader propertyReader = new PropertyReader();
+        String username = propertyReader.getUserName();
+        String password = propertyReader.getPassword();
+        String host = propertyReader.getHost();
+        String port = propertyReader.getPort();
+
+        HttpPost httppost = new HttpPost("http://" + host + ":" + port + "/oauth/token");
         CredentialsProvider creds = new BasicCredentialsProvider();
-        creds.setCredentials(new AuthScope(host, port),
+        creds.setCredentials(new AuthScope(host, Integer.parseInt(port)),
                 new UsernamePasswordCredentials(username, password));
 
         CloseableHttpClient httpclient = HttpClients.
@@ -43,27 +42,11 @@ public class HttpAuthenticateClient {
                 addParameter("scope", value).build();
         httppost.setURI(uriBuilder);
 
-        CloseableHttpResponse response = httpclient.execute(httppost);
-        try {
+        try (CloseableHttpResponse response = httpclient.execute(httppost)) {
             HttpEntity entity = response.getEntity();
             String responseBody = EntityUtils.toString(entity);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            HttpAuthenticationResponse authenticationResponse = objectMapper.readValue(responseBody, HttpAuthenticationResponse.class);
-
-            if (entity != null) {
-                InputStream instream = entity.getContent();
-                try {
-                    //Printing the status line
-                    //System.out.println(response.getStatusLine());
-                } finally {
-                    instream.close();
-                }
-            }
-            return authenticationResponse;
-        } finally {
-            response.close();
+            return AuthenticationResponseUtility.getAuthenticationResponse(responseBody);
         }
     }
 }
