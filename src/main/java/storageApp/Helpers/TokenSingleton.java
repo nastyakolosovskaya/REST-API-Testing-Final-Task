@@ -6,24 +6,24 @@ public class TokenSingleton {
     }
 
     public static TokenSingleton tokenSingleton;
-    private static String SINGLETON_READ;
-    private static String SINGLETON_WRITE;
+    private static String singletonRead;
+    private static String singletonWrite;
 
     public static TokenSingleton initialize() {
         if (tokenSingleton == null) {
             tokenSingleton = new TokenSingleton();
             HttpAuthenticateClient httpAuthenticateClient = new HttpAuthenticateClient();
-            SINGLETON_READ = httpAuthenticateClient.getHttpConnection("read").getAccessToken();
-            SINGLETON_WRITE = httpAuthenticateClient.getHttpConnection("write").getAccessToken();
+            singletonRead = httpAuthenticateClient.getHttpConnection("read").getAccessToken();
+            singletonWrite = httpAuthenticateClient.getHttpConnection("write").getAccessToken();
         }
         return tokenSingleton;
     }
 
     public static String getSingletonRead() {
-        return SINGLETON_READ;
+        return singletonRead;
     }
 
     public static String getSingletonWrite() {
-        return SINGLETON_WRITE;
+        return singletonWrite;
     }
 }
