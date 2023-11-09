@@ -22,10 +22,10 @@ public class HttpAuthenticateClient {
     public HttpAuthenticationResponse getHttpConnection(String value) {
 
         PropertyReader propertyReader = new PropertyReader();
-        String username = propertyReader.getUserName();
-        String password = propertyReader.getPassword();
-        String host = propertyReader.getHost();
-        String port = propertyReader.getPort();
+        String username = propertyReader.getProperty("userName");
+        String password = propertyReader.getProperty("password");
+        String host = propertyReader.getProperty("host");
+        String port = propertyReader.getProperty("port");
 
         HttpPost httppost = new HttpPost("http://" + host + ":" + port + "/oauth/token");
         CredentialsProvider creds = new BasicCredentialsProvider();
