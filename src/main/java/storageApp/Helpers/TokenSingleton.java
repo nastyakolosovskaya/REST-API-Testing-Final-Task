@@ -1,12 +1,16 @@
 package storageApp.Helpers;
 
+import lombok.Getter;
+
 public class TokenSingleton {
 
     TokenSingleton() {
     }
 
     public static TokenSingleton tokenSingleton;
+    @Getter
     private static String singletonRead;
+    @Getter
     private static String singletonWrite;
 
     public static TokenSingleton initialize() {
@@ -17,13 +21,5 @@ public class TokenSingleton {
             singletonWrite = httpAuthenticateClient.getHttpConnection("write").getAccessToken();
         }
         return tokenSingleton;
-    }
-
-    public static String getSingletonRead() {
-        return singletonRead;
-    }
-
-    public static String getSingletonWrite() {
-        return singletonWrite;
     }
 }
