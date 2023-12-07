@@ -12,14 +12,14 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import storageApp.Data.HttpAuthenticationResponse;
+import storageApp.Data.TokenData;
 import storageApp.Utilities.AuthenticationResponseUtility;
 
 import java.net.*;
 public class HttpAuthenticateClient {
 
     @SneakyThrows
-    public HttpAuthenticationResponse getHttpConnection(String value) {
+    public TokenData getHttpConnection(String value) {
 
         PropertyReader propertyReader = new PropertyReader();
         String username = propertyReader.getProperty("userName");
@@ -27,7 +27,7 @@ public class HttpAuthenticateClient {
         String host = propertyReader.getProperty("host");
         String port = propertyReader.getProperty("port");
 
-        HttpPost httppost = new HttpPost("http://" + host + ":" + port + "/oauth/token");
+        HttpPost httppost = new HttpPost(propertyReader.getProperty("basic.url") + propertyReader.getProperty("auth.token"));
         CredentialsProvider creds = new BasicCredentialsProvider();
         creds.setCredentials(new AuthScope(host, Integer.parseInt(port)),
                 new UsernamePasswordCredentials(username, password));

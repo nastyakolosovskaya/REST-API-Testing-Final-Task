@@ -2,7 +2,7 @@ package storageApp.Utilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import storageApp.Data.HttpAuthenticationResponse;
+import storageApp.Data.TokenData;
 
 public class AuthenticationResponseUtility {
 
@@ -10,8 +10,8 @@ public class AuthenticationResponseUtility {
     }
 
     @SneakyThrows
-    public static HttpAuthenticationResponse getAuthenticationResponse(String responseBody) {
+    public static TokenData getAuthenticationResponse(String responseBody) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(responseBody, HttpAuthenticationResponse.class);
+        return objectMapper.readValue(responseBody, TokenData.class);
     }
 }
