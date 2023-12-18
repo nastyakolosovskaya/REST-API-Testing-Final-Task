@@ -33,7 +33,7 @@ public class PostZipCodes {
 
     @SneakyThrows
         public int postZipCodeResponse(String json) {
-            CloseableHttpClient client = HttpClients.createDefault();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             try (
                     CloseableHttpResponse response = client.execute(postZipCodeRequest(json))) {
                 HttpEntity entity = response.getEntity();
@@ -43,4 +43,5 @@ public class PostZipCodes {
                 return statusCode;
             }
         }
+    }
     }
