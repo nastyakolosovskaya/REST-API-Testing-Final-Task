@@ -40,18 +40,19 @@ public class GetZipcodes {
 
     @SneakyThrows
     public String getZipCodesResponse(int status) {
-        CloseableHttpClient client = HttpClients.createDefault();
-        try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
-            int statusCode = response.getCode();
-            if (status != statusCode) {
-                logger.info("Wrong status code: " + status);
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
+                int statusCode = response.getCode();
+                if (status != statusCode) {
+                    logger.info("Wrong status code: " + status);
+                }
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+
+                logger.info(responseBody);
+
+                return responseBody;
             }
-            HttpEntity entity = response.getEntity();
-            String responseBody = EntityUtils.toString(entity);
-
-            logger.info(responseBody);
-
-            return responseBody;
         }
     }
 }

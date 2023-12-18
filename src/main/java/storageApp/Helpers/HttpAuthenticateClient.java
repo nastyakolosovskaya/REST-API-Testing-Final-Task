@@ -31,21 +31,22 @@ public class HttpAuthenticateClient {
         creds.setCredentials(new AuthScope(host, Integer.parseInt(port)),
                 new UsernamePasswordCredentials(username, password.toCharArray()));
 
-        CloseableHttpClient httpclient = HttpClients.
+        try (CloseableHttpClient httpclient = HttpClients.
                 custom().
                 setDefaultCredentialsProvider(creds).
-                build();
+                build()) {
 
-        URI uriBuilder = new URIBuilder(httppost.getUri()).
-                addParameter("grant_type", "client_credentials").
-                addParameter("scope", value).build();
-        httppost.setUri(uriBuilder);
+            URI uriBuilder = new URIBuilder(httppost.getUri()).
+                    addParameter("grant_type", "client_credentials").
+                    addParameter("scope", value).build();
+            httppost.setUri(uriBuilder);
 
-        try (CloseableHttpResponse response = httpclient.execute(httppost)) {
-            HttpEntity entity = response.getEntity();
-            String responseBody = EntityUtils.toString(entity);
+            try (CloseableHttpResponse response = httpclient.execute(httppost)) {
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
 
-            return AuthenticationResponseUtility.getAuthenticationResponse(responseBody);
+                return AuthenticationResponseUtility.getAuthenticationResponse(responseBody);
+            }
         }
     }
 }
