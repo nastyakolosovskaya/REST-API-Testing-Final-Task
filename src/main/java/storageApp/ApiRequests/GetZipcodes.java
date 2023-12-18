@@ -1,13 +1,13 @@
 package storageApp.ApiRequests;
 
 import lombok.SneakyThrows;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storageApp.Helpers.PropertyReader;
@@ -17,7 +17,7 @@ import storageApp.Helpers.TokenSingleton;
 public class GetZipcodes {
 
     private final PropertyReader propertyReader = new PropertyReader();
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    static Logger logger = LoggerFactory.getLogger(GetZipcodes.class);
 
     @SneakyThrows
     public HttpGet getZipCodesRequest() {
@@ -33,19 +33,24 @@ public class GetZipcodes {
     public int getZipCodesStatusCode() {
         CloseableHttpClient client = HttpClients.createDefault();
         try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response.getCode();
             return statusCode;
         }
     }
 
     @SneakyThrows
-    public String getZipCodesResponse() {
+    public String getZipCodesResponse(int status) {
         CloseableHttpClient client = HttpClients.createDefault();
         try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
+            int statusCode = response.getCode();
+            if (status != statusCode) {
+                logger.info("Wrong status code: " + status);
+            }
             HttpEntity entity = response.getEntity();
             String responseBody = EntityUtils.toString(entity);
-            //System.out.println(ZipCodesDataUtility.retrieveResourceFromResponse(response, ZipCodesData.class));
-            //logger.info("Response -> {}", EntityUtils.toString(entity));
+
+            logger.info(responseBody);
+
             return responseBody;
         }
     }

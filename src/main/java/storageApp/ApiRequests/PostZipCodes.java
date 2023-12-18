@@ -1,14 +1,14 @@
 package storageApp.ApiRequests;
 
 import lombok.SneakyThrows;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storageApp.Helpers.PropertyReader;
@@ -17,8 +17,7 @@ import storageApp.Helpers.TokenSingleton;
 public class PostZipCodes {
 
     private final PropertyReader propertyReader = new PropertyReader();
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    static Logger logger = LoggerFactory.getLogger(PostZipCodes.class);
     @SneakyThrows
     public HttpPost postZipCodeRequest(String json) {
 
@@ -37,10 +36,10 @@ public class PostZipCodes {
             CloseableHttpClient client = HttpClients.createDefault();
             try (
                     CloseableHttpResponse response = client.execute(postZipCodeRequest(json))) {
-                HttpEntity entity1 = response.getEntity();
-                String responseBody = EntityUtils.toString(entity1);
-                System.out.println(responseBody);
-                int statusCode = response.getStatusLine().getStatusCode();
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                logger.info(responseBody);
+                int statusCode = response.getCode();
                 return statusCode;
             }
         }

@@ -1,17 +1,16 @@
 package Task20;
 
 import lombok.SneakyThrows;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import storageApp.ApiRequests.GetZipcodes;
 import storageApp.ApiRequests.PostZipCodes;
 import storageApp.Helpers.TokenSingleton;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class UserStorageAppTest {
 
@@ -27,9 +26,9 @@ public class UserStorageAppTest {
     @Test
     void getAllAvailableZipCodeTest() {
 
-        String responseBody = getZipcodes.getZipCodesResponse();
-        assertTrue(responseBody.contains("ABCD"));
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
 
+        assertTrue(responseBody.contains("ABCD"));
     }
 
     @Test
@@ -37,13 +36,10 @@ public class UserStorageAppTest {
     void addZipCodeTest() {
 
         final String json = "[" + "11111" + "]";
+        postZipCodes.postZipCodeResponse(json);
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
 
-        int statusCode = postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse();
-
-        assertThat(statusCode, equalTo(HttpStatus.SC_CREATED));
         assertTrue(responseBody.contains(json));
-
     }
 
 
@@ -52,9 +48,9 @@ public class UserStorageAppTest {
     void addSeveralZipCodesTest() {
 
         final String json = "[" + "11111" + "," + "2222" + "]";
-        int statusCode = postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse();
-        assertThat(statusCode, equalTo(HttpStatus.SC_CREATED));
+        postZipCodes.postZipCodeResponse(json);
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+
         assertAll(
                 () -> assertTrue(responseBody.contains("11111")),
                 () -> assertTrue(responseBody.contains("2222"))
@@ -66,11 +62,10 @@ public class UserStorageAppTest {
     void duplicateValidationInZipCodeListTest() {
 
         final String json = "[" + "33333" + "," + "33333" + "]";
-        int statusCode = postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse();
-        assertThat(statusCode, equalTo(HttpStatus.SC_CREATED));
-        assertTrue(responseBody.contains("33333"));
+        postZipCodes.postZipCodeResponse(json);
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
 
+        assertTrue(responseBody.contains("33333"));
     }
 
     @Test
@@ -78,10 +73,9 @@ public class UserStorageAppTest {
     void duplicationsAlreadyExistInZipCodeListTest() {
 
         final String json = "[" + "22222" + "]";
-        int statusCode = postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse();
-        assertThat(statusCode, equalTo(HttpStatus.SC_CREATED));
-        assertTrue(responseBody.contains("33333"));
+        postZipCodes.postZipCodeResponse(json);
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
 
+        assertTrue(responseBody.contains("22222"));
     }
 }
