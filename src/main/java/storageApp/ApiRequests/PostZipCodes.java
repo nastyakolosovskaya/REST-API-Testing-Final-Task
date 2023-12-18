@@ -18,6 +18,7 @@ public class PostZipCodes {
 
     private final PropertyReader propertyReader = new PropertyReader();
     static Logger logger = LoggerFactory.getLogger(PostZipCodes.class);
+
     @SneakyThrows
     public HttpPost postZipCodeRequest(String json) {
 
@@ -32,7 +33,7 @@ public class PostZipCodes {
     }
 
     @SneakyThrows
-        public int postZipCodeResponse(String json) {
+    public int postZipCodeResponse(String json) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             try (
                     CloseableHttpResponse response = client.execute(postZipCodeRequest(json))) {
@@ -44,4 +45,16 @@ public class PostZipCodes {
             }
         }
     }
+
+    public int numberOfOccurrences(String source, String sentence) {
+        int occurrences = 0;
+
+        if (source.contains(sentence)) {
+            int withSentenceLength    = source.length();
+            int withoutSentenceLength = source.replace(sentence, "").length();
+            occurrences = (withSentenceLength - withoutSentenceLength) / sentence.length();
+        }
+
+        return occurrences;
     }
+}

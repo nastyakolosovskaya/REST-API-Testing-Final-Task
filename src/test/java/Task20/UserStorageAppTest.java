@@ -8,9 +8,7 @@ import storageApp.ApiRequests.GetZipcodes;
 import storageApp.ApiRequests.PostZipCodes;
 import storageApp.Helpers.TokenSingleton;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserStorageAppTest {
 
@@ -39,9 +37,8 @@ public class UserStorageAppTest {
         postZipCodes.postZipCodeResponse(json);
         String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
 
-        assertTrue(responseBody.contains(json));
+        assertTrue(responseBody.contains("11111"));
     }
-
 
     @Test
     @SneakyThrows
@@ -64,18 +61,20 @@ public class UserStorageAppTest {
         final String json = "[" + "33333" + "," + "33333" + "]";
         postZipCodes.postZipCodeResponse(json);
         String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        int occurrences = postZipCodes.numberOfOccurrences(responseBody, "33333");
 
-        assertTrue(responseBody.contains("33333"));
+        assertEquals(1,occurrences);
     }
 
     @Test
     @SneakyThrows
     void duplicationsAlreadyExistInZipCodeListTest() {
 
-        final String json = "[" + "22222" + "]";
+        final String json = "[" + "12345" + "]";
         postZipCodes.postZipCodeResponse(json);
         String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        int occurrences = postZipCodes.numberOfOccurrences(responseBody, "12345");
 
-        assertTrue(responseBody.contains("22222"));
+        assertEquals(1,occurrences);
     }
 }
