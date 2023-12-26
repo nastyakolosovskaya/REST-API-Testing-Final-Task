@@ -1,10 +1,10 @@
-package storageApp.ApiRequests;
+package Task30.UserApiRequests;
 
 import lombok.SneakyThrows;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -13,36 +13,27 @@ import org.slf4j.LoggerFactory;
 import storageApp.Helpers.PropertyReader;
 import storageApp.Helpers.TokenSingleton;
 
-
-public class GetZipcodes {
+public class GetUser {
 
     private final PropertyReader propertyReader = new PropertyReader();
-    static Logger logger = LoggerFactory.getLogger(GetZipcodes.class);
+    static Logger logger = LoggerFactory.getLogger(GetUser.class);
 
     @SneakyThrows
-    public HttpGet getZipCodesRequest() {
+    public HttpGet getUsersRequest() {
         TokenSingleton.initialize();
 
-        HttpGet request = new HttpGet(propertyReader.getProperty("basic.url") + propertyReader.getProperty("zipcodes"));
+        HttpGet request = new HttpGet(propertyReader.getProperty("basic.url") + propertyReader.getProperty("users"));
         request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer" + TokenSingleton.getSingletonRead());
 
         return request;
     }
 
     @SneakyThrows
-    public int getZipCodesStatusCode() {
-        CloseableHttpClient client = HttpClients.createDefault();
-        try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
-            int statusCode = response.getCode();
-            return statusCode;
-        }
-    }
-
-    @SneakyThrows
-    public String getZipCodesResponse(int status) {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            try (CloseableHttpResponse response = client.execute(getZipCodesRequest())) {
+    public String getUserResponse(int status) {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            try (CloseableHttpResponse response = client.execute(getUsersRequest())) {
                 int statusCode = response.getCode();
+
                 if (status != statusCode) {
                     logger.info("Wrong status code: " + status);
                 }
@@ -56,3 +47,4 @@ public class GetZipcodes {
         }
     }
 }
+
