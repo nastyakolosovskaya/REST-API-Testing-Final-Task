@@ -1,16 +1,14 @@
-package Task20;
+package Task20.ZipCodesApiRequests;
 
 import lombok.SneakyThrows;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import storageApp.ApiRequests.GetZipcodes;
-import storageApp.ApiRequests.PostZipCodes;
 import storageApp.Helpers.TokenSingleton;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserStorageAppTest {
+public class ZipCodesTest {
 
     private final GetZipcodes getZipcodes = new GetZipcodes();
     private final PostZipCodes postZipCodes = new PostZipCodes();

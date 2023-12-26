@@ -1,4 +1,4 @@
-package storageApp.ApiRequests;
+package Task20.ZipCodesApiRequests;
 
 import lombok.SneakyThrows;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
