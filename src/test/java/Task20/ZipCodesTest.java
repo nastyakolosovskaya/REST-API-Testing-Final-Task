@@ -1,5 +1,7 @@
-package Task20.ZipCodesApiRequests;
+package Task20;
 
+import Task20.ZipCodesApiRequests.GetZipcodes;
+import Task20.ZipCodesApiRequests.PostZipCodes;
 import lombok.SneakyThrows;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
