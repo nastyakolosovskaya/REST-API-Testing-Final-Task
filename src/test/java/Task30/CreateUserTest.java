@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import storageApp.Data.User;
 import storageApp.Helpers.TokenSingleton;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,50 +29,32 @@ public class CreateUserTest {
     @Test
     void createUserWithAllFieldsTest() {
 
-        final String json = """
-                {
-                  "age": 10,
-                  "name": "test",
-                  "sex": "FEMALE",
-                  "zipCode": "23456"
-                }""";
-        postUser.postUserResponse(json);
+        User user = new User("10", "test", "FEMALE", "23456");
+        postUser.postUserResponse(user);
         String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
         String zipCodesResponseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
 
-        assertTrue(userResponseBody.contains("test"));
-        assertFalse(zipCodesResponseBody.contains("23456"));
+        assertTrue(userResponseBody.contains(user.getName()));
+        assertFalse(zipCodesResponseBody.contains(user.getZipCode()));
     }
 
     @SneakyThrows
     @Test
     void createUserWithOnlyRequiredFieldsTest() {
 
-        final String json = """
-                {
-                  "age": 10,
-                  "name": "test1",
-                  "sex": "MALE"
-                }""";
-
-        postUser.postUserResponse(json);
+        User user = new User("10", "test1", "FEMALE");
+        postUser.postUserResponse(user);
         String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
 
-        assertTrue(userResponseBody.contains("test1"));
+        assertTrue(userResponseBody.contains(user.getName()));
     }
 
     @SneakyThrows
     @Test
     void createUserWithUnavailableZipCodeTest() {
 
-        final String json = """
-                {
-                  "age": 10,
-                  "name": "test2",
-                  "sex": "FEMALE",
-                  "zipCode": "55555"
-                }""";
-        int statusCode = postUser.postUserResponse(json);
+        User user = new User("10", "test2", "FEMALE", "55555");
+        int statusCode = postUser.postUserResponse(user);
 
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
     }
@@ -80,14 +63,9 @@ public class CreateUserTest {
     @Test
     void createUserWithTheSameNameAndSexTest() {
 
-        final String json = """
-                {
-                  "age": 10,
-                  "name": "test",
-                  "sex": "FEMALE",
-                  "zipCode": "33333"
-                }""";
-        int statusCode = postUser.postUserResponse(json);
+        User user = new User("10", "test", "FEMALE", "33333");
+
+        int statusCode = postUser.postUserResponse(user);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode);
     }

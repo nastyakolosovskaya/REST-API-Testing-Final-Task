@@ -1,5 +1,6 @@
 package Task30.UserApiRequests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -11,6 +12,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import storageApp.Data.User;
 import storageApp.Helpers.PropertyReader;
 import storageApp.Helpers.TokenSingleton;
 
@@ -33,10 +35,12 @@ public class PostUser {
     }
 
     @SneakyThrows
-    public int postUserResponse(String json) {
+    public int postUserResponse(User user) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            try (
-                    CloseableHttpResponse response = client.execute(postUserRequest(json))) {
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonString = mapper.writeValueAsString(user);
+                    CloseableHttpResponse response = client.execute(postUserRequest(jsonString)); {
                 HttpEntity entity = response.getEntity();
                 String responseBody = EntityUtils.toString(entity);
                 logger.info(responseBody);
