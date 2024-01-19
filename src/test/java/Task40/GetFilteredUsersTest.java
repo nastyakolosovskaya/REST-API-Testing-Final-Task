@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import storageApp.Data.User;
+import storageApp.Data.UserBuilder;
 import storageApp.Helpers.TokenSingleton;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +25,7 @@ public class GetFilteredUsersTest {
     @Test
     void filterUsersOlderThanTest() {
 
-        User user = new User("20", "test1", "FEMALE");
+        User user = new UserBuilder().setAge("20").setName("test1").setSex("FEMALE").createUser();
         postUser.postUserResponse(user);
         String responseBody = filteredUsers.getUsersFilteredRequest("olderThan", "19");
 
@@ -35,7 +36,7 @@ public class GetFilteredUsersTest {
     @Test
     void filterUsersYoungerThanTest() {
 
-        User user = new User("10", "test1", "FEMALE");
+        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
         postUser.postUserResponse(user);
         String responseBody = filteredUsers.getUsersFilteredRequest("youngerThan", "11");
 
@@ -46,7 +47,7 @@ public class GetFilteredUsersTest {
     @Test
     void filterUsersByFemaleSexTest() {
 
-        User user = new User("10", "test1", "FEMALE");
+        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
         postUser.postUserResponse(user);
         String responseBody = filteredUsers.getUsersFilteredRequest("sex", "FEMALE");
 
@@ -57,7 +58,7 @@ public class GetFilteredUsersTest {
     @Test
     void filterUsersByMaleSexTest() {
 
-        User user = new User("10", "test1", "MALE");
+        User user = new UserBuilder().setAge("10").setName("test1").setSex("MALE").createUser();
         postUser.postUserResponse(user);
         String responseBody = filteredUsers.getUsersFilteredRequest("sex", "MALE");
 
