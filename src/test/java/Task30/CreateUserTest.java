@@ -8,6 +8,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import storageApp.Data.User;
+import storageApp.Data.UserBuilder;
 import storageApp.Helpers.TokenSingleton;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,9 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CreateUserTest {
 
     private final GetZipcodes getZipcodes = new GetZipcodes();
-
     private final GetUser getUser = new GetUser();
-
     private final PostUser postUser = new PostUser();
 
     @BeforeEach
@@ -29,7 +28,7 @@ public class CreateUserTest {
     @Test
     void createUserWithAllFieldsTest() {
 
-        User user = new User("10", "test", "FEMALE", "23456");
+        User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("23456").createUser();
         postUser.postUserResponse(user);
         String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
         String zipCodesResponseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
@@ -42,7 +41,7 @@ public class CreateUserTest {
     @Test
     void createUserWithOnlyRequiredFieldsTest() {
 
-        User user = new User("10", "test1", "FEMALE");
+        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
         postUser.postUserResponse(user);
         String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
 
@@ -53,7 +52,7 @@ public class CreateUserTest {
     @Test
     void createUserWithUnavailableZipCodeTest() {
 
-        User user = new User("10", "test2", "FEMALE", "55555");
+        User user = new UserBuilder().setAge("10").setName("test2").setSex("FEMALE").setZipCode("55555").createUser();
         int statusCode = postUser.postUserResponse(user);
 
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
@@ -63,7 +62,7 @@ public class CreateUserTest {
     @Test
     void createUserWithTheSameNameAndSexTest() {
 
-        User user = new User("10", "test", "FEMALE", "33333");
+        User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("33333").createUser();
 
         int statusCode = postUser.postUserResponse(user);
 
