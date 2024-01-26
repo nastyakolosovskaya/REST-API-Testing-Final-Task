@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public class User {
 
-    private String age;
-    private String name;
-    private String sex;
-    private String zipCode;
+    private final String age;
+    private final String name;
+    private final String sex;
+    private final String zipCode;
 
     public User(String age, String name, String sex, String zipCode) {
         this.age = age;
