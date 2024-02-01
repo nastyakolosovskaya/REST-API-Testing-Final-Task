@@ -1,0 +1,12 @@
+[{
+  "age": 10,
+  "name": "test10",
+  "sex": "FEMALE",
+  "zipCode": "ABCDE"
+},
+{
+"age": 20,
+"name": "test20",
+"sex": "MALE",
+"zipCode": "12345"
+}]
