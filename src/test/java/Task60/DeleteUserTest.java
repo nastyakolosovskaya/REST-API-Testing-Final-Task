@@ -4,7 +4,10 @@ import Task20.ZipCodesApiRequests.GetZipcodes;
 import Task30.UserApiRequests.GetUser;
 import Task30.UserApiRequests.PostUser;
 import Task60.DeleteUserApiRequests.DeleteUser;
-import lombok.SneakyThrows;
+import io.qameta.allure.Description;
+import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +15,8 @@ import storageApp.Data.User;
 import storageApp.Data.UserBuilder;
 import storageApp.Helpers.TokenSingleton;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteUserTest {
 
@@ -26,55 +30,86 @@ public class DeleteUserTest {
         TokenSingleton.initialize();
     }
 
-    @SneakyThrows
+    @Step
+    String getUser() {
+        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        return userResponseBody;
+    }
+
+    @Step
+    int postUser(User user) {
+        int statusCode = postUser.postUserResponse(user);
+        return statusCode;
+    }
+
+    int deleteUser(User user) {
+        int statusCode = deleteUser.deleteUserResponse(user);
+        return statusCode;
+    }
+
+    @Step
+    String getZipCodes() {
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        return responseBody;
+    }
+
     @Test
+    @Description("Scenario 1: Delete user with all fields")
+    @Story("Delete User")
     void deleteUserWithAllFieldsTest() {
 
         User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("12345").createUser();
-        postUser.postUserResponse(user);
 
-        int statusCode = deleteUser.deleteUserResponse(user);
-        String zipCodesResponseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
+        postUser(user);
+        int statusCode = deleteUser(user);
+        String zipCodesResponseBody = getZipCodes();
+        getUser();
 
-        getUser.getUserResponse(HttpStatus.SC_OK);
         assertEquals(HttpStatus.SC_NO_CONTENT, statusCode);
         assertTrue(zipCodesResponseBody.contains(user.getZipCode()));
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 2: Delete user with only required fields")
+    @Story("Delete User")
+    @Issue("Bug #1 : User isn’t deleted if body request body contains required fields only")
     void deleteUserWithOnlyRequiredFieldsTest() {
 
         User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").setZipCode("23456").createUser();
-        postUser.postUserResponse(user);
         User userWithRequiredFields = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
-        int statusCode = deleteUser.deleteUserResponse(userWithRequiredFields);
-        String zipCodesResponseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
+
+        postUser(user);
+        int statusCode = deleteUser(userWithRequiredFields);
+        String zipCodesResponseBody = getZipCodes();
 
         assertEquals(HttpStatus.SC_NO_CONTENT, statusCode);
         assertTrue(zipCodesResponseBody.contains(user.getZipCode()));
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Delete user without user name")
+    @Story("Delete User")
     void deleteUserWithoutNameTest() {
 
         User user = new UserBuilder().setAge("10").setName("test2").setSex("FEMALE").setZipCode("ABCDE").createUser();
-        postUser.postUserResponse(user);
         User userWithRequiredFields = new UserBuilder().setAge("10").setSex("FEMALE").setZipCode("ABCDE").createUser();
-        int statusCode = deleteUser.deleteUserResponse(userWithRequiredFields);
+
+        postUser(user);
+        int statusCode = deleteUser(userWithRequiredFields);
 
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Delete user without sex")
+    @Story("Delete User")
     void deleteUserWithoutSexTest() {
 
         User user = new UserBuilder().setAge("10").setName("test3").setSex("FEMALE").setZipCode("12345").createUser();
-        postUser.postUserResponse(user);
         User userWithRequiredFields = new UserBuilder().setAge("10").setName("test3").setZipCode("12345").createUser();
-        int statusCode = deleteUser.deleteUserResponse(userWithRequiredFields);
+
+        postUser(user);
+        int statusCode = deleteUser(userWithRequiredFields);
 
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }

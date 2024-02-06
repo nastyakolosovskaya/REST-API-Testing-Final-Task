@@ -2,7 +2,10 @@ package Task20;
 
 import Task20.ZipCodesApiRequests.GetZipcodes;
 import Task20.ZipCodesApiRequests.PostZipCodes;
-import lombok.SneakyThrows;
+import io.qameta.allure.Description;
+import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,33 +23,53 @@ public class ZipCodesTest {
         TokenSingleton.initialize();
     }
 
-    @SneakyThrows
+    @Step
+    String getZipCodes() {
+        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        return responseBody;
+    }
+
+    @Step
+    int numberOfZipCodeOccurrences(String responseBody, String sentence) {
+        int occurrences = postZipCodes.numberOfOccurrences(responseBody, sentence);
+        return occurrences;
+    }
+
+    @Step
+    void postZipCodes(String json) {
+        postZipCodes.postZipCodeResponse(json);
+    }
+
     @Test
+    @Description("Scenario #1: Get the list of all available Zip Codes")
+    @Story("Zip Codes")
     void getAllAvailableZipCodeTest() {
 
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_OK);
-
+        String responseBody = getZipCodes();
         assertTrue(responseBody.contains("ABCD"));
     }
 
     @Test
-    @SneakyThrows
+    @Description("Scenario #2: Add valid Zip Code")
+    @Story("Zip Codes")
+    @Issue("Bug #1 : GET request to /zip-codes endpoint return 201 code instead of 200 code")
     void addZipCodeTest() {
 
         final String json = "[" + "11111" + "]";
-        postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
 
+        postZipCodes("json");
+        String responseBody = getZipCodes();
         assertTrue(responseBody.contains("11111"));
     }
 
     @Test
-    @SneakyThrows
+    @Description("Scenario #2: Add several valid Zip Codes")
+    @Story("Zip Codes")
     void addSeveralZipCodesTest() {
 
         final String json = "[" + "11111" + "," + "2222" + "]";
-        postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        postZipCodes(json);
+        String responseBody = getZipCodes();
 
         assertAll(
                 () -> assertTrue(responseBody.contains("11111")),
@@ -55,26 +78,30 @@ public class ZipCodesTest {
     }
 
     @Test
-    @SneakyThrows
+    @Description("Scenario #3: Add duplicated Zip Codes which don't exist in the Zip Codes list")
+    @Story("Zip Codes")
+    @Issue("Bug #2: Duplicates are saved for POST request to /zip-codes/expand endpoint")
     void duplicateValidationInZipCodeListTest() {
 
         final String json = "[" + "33333" + "," + "33333" + "]";
-        postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        postZipCodes(json);
+        String responseBody = getZipCodes();
         int occurrences = postZipCodes.numberOfOccurrences(responseBody, "33333");
 
-        assertEquals(1,occurrences);
+        assertEquals(1, occurrences);
     }
 
     @Test
-    @SneakyThrows
+    @Description("Scenario #3: Add duplicated Zip Codes which already exist in the Zip Codes list")
+    @Story("Zip Codes")
+    @Issue("Bug #3: Duplicates are saved for POST request to /zip-codes/expand endpoint")
     void duplicationsAlreadyExistInZipCodeListTest() {
 
         final String json = "[" + "12345" + "]";
         postZipCodes.postZipCodeResponse(json);
         String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
-        int occurrences = postZipCodes.numberOfOccurrences(responseBody, "12345");
+        int occurrences = numberOfZipCodeOccurrences(responseBody, "12345");
 
-        assertEquals(1,occurrences);
+        assertEquals(1, occurrences);
     }
 }

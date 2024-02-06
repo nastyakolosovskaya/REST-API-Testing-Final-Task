@@ -2,7 +2,10 @@ package Task70;
 
 import Task30.UserApiRequests.GetUser;
 import Task70.UploadUsersApiRequests.UploadUser;
-import lombok.SneakyThrows;
+import io.qameta.allure.Description;
+import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,38 +24,57 @@ public class UploadUserTest {
         TokenSingleton.initialize();
     }
 
-    @SneakyThrows
+    @Step
+    String getUser() {
+        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        return userResponseBody;
+    }
+
+    @Step
+    int uploadUser(String filePath) {
+        int statusCode = uploadUser.postUserUploadResponse("jsonFileValid");
+        return statusCode;
+    }
+
     @Test
+    @Description("Scenario 1: Update user with all fields")
+    @Story("Upload User")
     void uploadUserTest() {
 
-        int statusCode = uploadUser.postUserUploadResponse("jsonFileValid");
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        int statusCode = uploadUser("jsonFileValid");
+        String userResponseBody = getUser();
 
         assertEquals(HttpStatus.SC_CREATED, statusCode);
         assertTrue(userResponseBody.contains("test10"));
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 2: Update user with invalid zip code")
+    @Story("Upload User")
+    @Issue("Bug #1 : Wrong status code for incorrect zip code in response body")
     void uploadUserWithInvalidZipCodeTest() {
 
-        int statusCode = uploadUser.postUserUploadResponse("usersWithInvalidZipCode");
+        int statusCode = uploadUser("usersWithInvalidZipCode");
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Update user without user name")
+    @Story("Upload User")
+    @Issue("Bug #2 : Wrong status code for empty required field")
     void uploadUserWithoutNameTest() {
 
-        int statusCode = uploadUser.postUserUploadResponse("usersWithoutName");
+        int statusCode = uploadUser("usersWithoutName");
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Update user without sex")
+    @Story("Upload User")
+    @Issue("Bug #2 : Wrong status code for empty required field")
     void uploadUserWithoutSexTest() {
 
-        int statusCode = uploadUser.postUserUploadResponse("usersWithoutSex");
+        int statusCode = uploadUser("usersWithoutSex");
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
 }
