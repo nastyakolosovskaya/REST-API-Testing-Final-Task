@@ -4,7 +4,10 @@ import Task30.UserApiRequests.GetUser;
 import Task30.UserApiRequests.PostUser;
 import Task50.UpdateUserApiRequests.PatchUser;
 import Task50.UpdateUserApiRequests.PutUser;
-import lombok.SneakyThrows;
+import io.qameta.allure.Description;
+import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
+import io.qameta.allure.Story;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,17 +29,42 @@ public class UpdateUserTest {
         TokenSingleton.initialize();
     }
 
-    @SneakyThrows
+    @Step
+    int postUser(User user) {
+        int statusCode = postUser.postUserResponse(user);
+        return statusCode;
+    }
+
+    @Step
+    int putUser(User user, User updatedUser) {
+        int statusCode = putUser.putUserResponse(user, updatedUser);
+        return statusCode;
+    }
+
+    @Step
+    int patchUser(User user, User updatedUser) {
+        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        return statusCode;
+    }
+
+    @Step
+    String getUser() {
+        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        return userResponseBody;
+    }
+
     @Test
+    @Description("Scenario 1: Update user using put method")
+    @Story("Update User")
     void updateUserWithPutMethodTest() {
 
         User user = new UserBuilder().setAge("20").setName("test14").setSex("FEMALE").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setAge("21").setName("test15").setSex("MALE").createUser();
 
-        int statusCode = putUser.putUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = putUser(user, updatedUser);
+        String userResponseBody = getUser();
 
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
         assertAll(
                 () -> assertEquals(HttpStatus.SC_OK, statusCode),
                 () -> assertTrue(userResponseBody.contains(updatedUser.getName())),
@@ -45,74 +73,80 @@ public class UpdateUserTest {
         );
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 1: Update user using patch method")
+    @Story("Update User")
     void updateUserWithPatchMethodTest() {
 
         User user = new UserBuilder().setAge("30").setName("test16").setSex("MALE").setZipCode("33333").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setAge("31").setName("test17").setSex("FEMALE").setZipCode("23456").createUser();
 
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = patchUser(user, updatedUser);
+        String userResponseBody = getUser();
 
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
         assertAll(
                 () -> assertEquals(HttpStatus.SC_OK, statusCode),
                 () -> assertTrue(userResponseBody.contains(updatedUser.getName())),
                 () -> assertTrue(userResponseBody.contains(updatedUser.getAge())),
                 () -> assertTrue(userResponseBody.contains(updatedUser.getSex()))
-
         );
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 2: Update user with unavailable zip code")
+    @Story("Update User")
+    @Issue("Bug #1 : Wrong status code for incorrect zip code in response body")
     void updateUserWithUnavailableZipCodeTest() {
 
         User user = new UserBuilder().setAge("40").setName("test18").setSex("MALE").setZipCode("23456").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setAge("41").setName("test19").setSex("FEMALE").setZipCode("00000").createUser();
 
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = patchUser(user, updatedUser);
 
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Update user without name")
+    @Story("Update User")
     void updateUserWithoutNameTest() {
 
         User user = new UserBuilder().setAge("50").setName("test20").setSex("MALE").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setAge("51").setSex("FEMALE").createUser();
 
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = patchUser(user, updatedUser);
 
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Update user without sex")
+    @Story("Update User")
     void updateUserWithoutSexTest() {
 
         User user = new UserBuilder().setAge("50").setName("test22").setSex("MALE").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setAge("51").setName("test23").createUser();
 
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = patchUser(user, updatedUser);
 
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
 
-    @SneakyThrows
     @Test
+    @Description("Scenario 3: Update user without age")
+    @Story("Update User")
+    @Issue("Bug #2 : User is updated with empty age")
     void updateUserWithoutAgeTest() {
 
         User user = new UserBuilder().setAge("50").setName("test24").setSex("MALE").createUser();
-        postUser.postUserResponse(user);
         User updatedUser = new UserBuilder().setSex("FEMALE").setName("test25").createUser();
 
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        postUser(user);
+        int statusCode = patchUser(user, updatedUser);
 
         assertEquals(HttpStatus.SC_CONFLICT, statusCode);
     }
