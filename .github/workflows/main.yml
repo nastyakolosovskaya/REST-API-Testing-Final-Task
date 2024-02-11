@@ -32,11 +32,26 @@ jobs:
       - name: Run Tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
         
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+          ref: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
+          path: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
+
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
-         files: |
-          test-results/**/*.xml
-          test-results/**/*.trx
-          test-results/**/*.json
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: build/allure-results
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
+          publish_dir: allure-history
