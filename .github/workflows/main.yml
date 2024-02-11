@@ -37,8 +37,8 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-          ref: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
-          path: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
+          ref: gh-pages
+          path: gh-pages
 
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
@@ -53,5 +53,5 @@ jobs:
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: https://github.com/nastyakolosovskaya/REST-API-Testing-Final-Task.git
+          publish_branch: gh-pages
           publish_dir: allure-history
