@@ -1,13 +1,16 @@
 package storageApp;
 
-import storageApp.helpers.TokenSingleton;
+import static storageApp.Helpers.TokenSingleton.*;
 
 public class userStorageApp {
 
     public static void main(String[] args) {
 
-        TokenSingleton.getInstance("read");
+        initialize();
+        System.out.println(getSingletonWrite());
+        System.out.println(getSingletonRead());
+        System.out.println(getSingletonWrite());
+        System.out.println(getSingletonRead());
+
     }
 }
-
-
