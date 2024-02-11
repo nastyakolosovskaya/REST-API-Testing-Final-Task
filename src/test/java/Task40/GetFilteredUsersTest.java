@@ -40,7 +40,7 @@ public class GetFilteredUsersTest {
     @Story("Filter User")
     void filterUsersOlderThanTest() {
 
-        User user = new UserBuilder().setAge("20").setName("test1").setSex("FEMALE").createUser();
+        User user = new UserBuilder().setAge("20").setName("test40").setSex("FEMALE").createUser();
         postUser(user);
         String responseBody = getFilteredUsers("olderThan", "19");
 
@@ -52,7 +52,7 @@ public class GetFilteredUsersTest {
     @Story("Filter User")
     void filterUsersYoungerThanTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
+        User user = new UserBuilder().setAge("10").setName("test41").setSex("FEMALE").createUser();
         postUser(user);
         String responseBody = getFilteredUsers("youngerThan", "11");
 
@@ -64,7 +64,7 @@ public class GetFilteredUsersTest {
     @Story("Filter User")
     void filterUsersByFemaleSexTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
+        User user = new UserBuilder().setAge("10").setName("test42").setSex("FEMALE").createUser();
         postUser(user);
         String responseBody = getFilteredUsers("sex", "FEMALE");
 
@@ -76,7 +76,7 @@ public class GetFilteredUsersTest {
     @Story("Filter User")
     void filterUsersByMaleSexTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test1").setSex("MALE").createUser();
+        User user = new UserBuilder().setAge("10").setName("test43").setSex("MALE").createUser();
         postUser(user);
         String responseBody = getFilteredUsers("sex", "MALE");
 

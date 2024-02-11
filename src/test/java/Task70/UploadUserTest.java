@@ -45,7 +45,7 @@ public class UploadUserTest {
         String userResponseBody = getUser();
 
         assertEquals(HttpStatus.SC_CREATED, statusCode);
-        assertTrue(userResponseBody.contains("test10"));
+        assertTrue(userResponseBody.contains("test70"));
     }
 
     @Test

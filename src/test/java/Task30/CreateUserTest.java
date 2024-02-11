@@ -1,6 +1,7 @@
 package Task30;
 
 import Task20.ZipCodesApiRequests.GetZipcodes;
+import Task20.ZipCodesApiRequests.PostZipCodes;
 import Task30.UserApiRequests.GetUser;
 import Task30.UserApiRequests.PostUser;
 import io.qameta.allure.Description;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateUserTest {
 
+    private final PostZipCodes postZipCodes = new PostZipCodes();
     private final GetZipcodes getZipcodes = new GetZipcodes();
     private final GetUser getUser = new GetUser();
     private final PostUser postUser = new PostUser();
@@ -50,7 +52,8 @@ public class CreateUserTest {
     @Story("Create User")
     void createUserWithAllFieldsTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("23456").createUser();
+        postZipCodes.postZipCodeResponse("[" + "13131" + "]");
+        User user = new UserBuilder().setAge("10").setName("test30").setSex("FEMALE").setZipCode("13131").createUser();
         postUser(user);
         String userResponseBody = getUser();
         String zipCodesResponseBody = getZipCodes();
@@ -64,7 +67,7 @@ public class CreateUserTest {
     @Story("Create User")
     void createUserWithOnlyRequiredFieldsTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
+        User user = new UserBuilder().setAge("10").setName("test31").setSex("FEMALE").createUser();
         postUser(user);
         String userResponseBody = getUser();
 
@@ -76,7 +79,7 @@ public class CreateUserTest {
     @Story("Create User")
     void createUserWithUnavailableZipCodeTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test2").setSex("FEMALE").setZipCode("55555").createUser();
+        User user = new UserBuilder().setAge("10").setName("test32").setSex("FEMALE").setZipCode("21212").createUser();
         int statusCode = postUser(user);
 
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
@@ -88,8 +91,11 @@ public class CreateUserTest {
     @Issue("Bug #1 : It is possible to create user with the same name and sex")
     void createUserWithTheSameNameAndSexTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("33333").createUser();
-        int statusCode = postUser(user);
+        postZipCodes.postZipCodeResponse("[" + "12121" + "," + "12122" + "]");
+        User user = new UserBuilder().setAge("10").setName("test33").setSex("FEMALE").setZipCode("12121").createUser();
+        User duplicatedUser = new UserBuilder().setAge("10").setName("test33").setSex("FEMALE").setZipCode("12122").createUser();
+        postUser(user);
+        int statusCode = postUser(duplicatedUser);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode);
     }

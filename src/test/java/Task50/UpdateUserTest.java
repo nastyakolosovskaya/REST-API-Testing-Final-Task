@@ -1,5 +1,6 @@
 package Task50;
 
+import Task20.ZipCodesApiRequests.PostZipCodes;
 import Task30.UserApiRequests.GetUser;
 import Task30.UserApiRequests.PostUser;
 import Task50.UpdateUserApiRequests.PatchUser;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdateUserTest {
 
+    private final PostZipCodes postZipCodes = new PostZipCodes();
     private final GetUser getUser = new GetUser();
     private final PutUser putUser = new PutUser();
     private final PatchUser patchUser = new PatchUser();
@@ -78,8 +80,11 @@ public class UpdateUserTest {
     @Story("Update User")
     void updateUserWithPatchMethodTest() {
 
-        User user = new UserBuilder().setAge("30").setName("test16").setSex("MALE").setZipCode("33333").createUser();
-        User updatedUser = new UserBuilder().setAge("31").setName("test17").setSex("FEMALE").setZipCode("23456").createUser();
+        final String json = "[" + "55555" + "]";
+        postZipCodes.postZipCodeResponse(json);
+
+        User user = new UserBuilder().setAge("30").setName("test16").setSex("MALE").setZipCode("55555").createUser();
+        User updatedUser = new UserBuilder().setAge("31").setName("test17").setSex("FEMALE").setZipCode("55555").createUser();
 
         postUser(user);
         int statusCode = patchUser(user, updatedUser);
@@ -99,8 +104,8 @@ public class UpdateUserTest {
     @Issue("Bug #1 : Wrong status code for incorrect zip code in response body")
     void updateUserWithUnavailableZipCodeTest() {
 
-        User user = new UserBuilder().setAge("40").setName("test18").setSex("MALE").setZipCode("23456").createUser();
-        User updatedUser = new UserBuilder().setAge("41").setName("test19").setSex("FEMALE").setZipCode("00000").createUser();
+        User user = new UserBuilder().setAge("40").setName("test50").setSex("MALE").setZipCode("23456").createUser();
+        User updatedUser = new UserBuilder().setAge("41").setName("test50").setSex("FEMALE").setZipCode("00000").createUser();
 
         postUser(user);
         int statusCode = patchUser(user, updatedUser);
@@ -113,7 +118,7 @@ public class UpdateUserTest {
     @Story("Update User")
     void updateUserWithoutNameTest() {
 
-        User user = new UserBuilder().setAge("50").setName("test20").setSex("MALE").createUser();
+        User user = new UserBuilder().setAge("50").setName("test52").setSex("MALE").createUser();
         User updatedUser = new UserBuilder().setAge("51").setSex("FEMALE").createUser();
 
         postUser(user);
@@ -127,8 +132,8 @@ public class UpdateUserTest {
     @Story("Update User")
     void updateUserWithoutSexTest() {
 
-        User user = new UserBuilder().setAge("50").setName("test22").setSex("MALE").createUser();
-        User updatedUser = new UserBuilder().setAge("51").setName("test23").createUser();
+        User user = new UserBuilder().setAge("50").setName("test54").setSex("MALE").createUser();
+        User updatedUser = new UserBuilder().setAge("51").setName("test54").createUser();
 
         postUser(user);
         int statusCode = patchUser(user, updatedUser);
@@ -142,8 +147,8 @@ public class UpdateUserTest {
     @Issue("Bug #2 : User is updated with empty age")
     void updateUserWithoutAgeTest() {
 
-        User user = new UserBuilder().setAge("50").setName("test24").setSex("MALE").createUser();
-        User updatedUser = new UserBuilder().setSex("FEMALE").setName("test25").createUser();
+        User user = new UserBuilder().setAge("50").setName("test56").setSex("MALE").createUser();
+        User updatedUser = new UserBuilder().setSex("FEMALE").setName("test56").createUser();
 
         postUser(user);
         int statusCode = patchUser(user, updatedUser);

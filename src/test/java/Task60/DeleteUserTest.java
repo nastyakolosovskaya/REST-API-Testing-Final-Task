@@ -1,6 +1,7 @@
 package Task60;
 
 import Task20.ZipCodesApiRequests.GetZipcodes;
+import Task20.ZipCodesApiRequests.PostZipCodes;
 import Task30.UserApiRequests.GetUser;
 import Task30.UserApiRequests.PostUser;
 import Task60.DeleteUserApiRequests.DeleteUser;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteUserTest {
 
+    private final PostZipCodes postZipCodes = new PostZipCodes();
     private final DeleteUser deleteUser = new DeleteUser();
     private final PostUser postUser = new PostUser();
     private final GetZipcodes getZipcodes = new GetZipcodes();
@@ -58,7 +60,9 @@ public class DeleteUserTest {
     @Story("Delete User")
     void deleteUserWithAllFieldsTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test").setSex("FEMALE").setZipCode("12345").createUser();
+        final String json = "[" + "66666" + "]";
+        postZipCodes.postZipCodeResponse(json);
+        User user = new UserBuilder().setAge("10").setName("test60").setSex("FEMALE").setZipCode("66666").createUser();
 
         postUser(user);
         int statusCode = deleteUser(user);
@@ -75,8 +79,10 @@ public class DeleteUserTest {
     @Issue("Bug #1 : User isn’t deleted if body request body contains required fields only")
     void deleteUserWithOnlyRequiredFieldsTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").setZipCode("23456").createUser();
-        User userWithRequiredFields = new UserBuilder().setAge("10").setName("test1").setSex("FEMALE").createUser();
+        final String json = "[" + "88888" + "]";
+        postZipCodes.postZipCodeResponse(json);
+        User user = new UserBuilder().setAge("10").setName("test62").setSex("FEMALE").setZipCode("88888").createUser();
+        User userWithRequiredFields = new UserBuilder().setAge("10").setName("test62").setSex("FEMALE").createUser();
 
         postUser(user);
         int statusCode = deleteUser(userWithRequiredFields);
@@ -91,8 +97,10 @@ public class DeleteUserTest {
     @Story("Delete User")
     void deleteUserWithoutNameTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test2").setSex("FEMALE").setZipCode("ABCDE").createUser();
-        User userWithRequiredFields = new UserBuilder().setAge("10").setSex("FEMALE").setZipCode("ABCDE").createUser();
+        final String json = "[" + "77777" + "]";
+        postZipCodes.postZipCodeResponse(json);
+        User user = new UserBuilder().setAge("10").setName("test64").setSex("FEMALE").setZipCode("77777").createUser();
+        User userWithRequiredFields = new UserBuilder().setAge("10").setSex("FEMALE").setZipCode("77777").createUser();
 
         postUser(user);
         int statusCode = deleteUser(userWithRequiredFields);
@@ -105,8 +113,10 @@ public class DeleteUserTest {
     @Story("Delete User")
     void deleteUserWithoutSexTest() {
 
-        User user = new UserBuilder().setAge("10").setName("test3").setSex("FEMALE").setZipCode("12345").createUser();
-        User userWithRequiredFields = new UserBuilder().setAge("10").setName("test3").setZipCode("12345").createUser();
+        final String json = "[" + "99999" + "]";
+        postZipCodes.postZipCodeResponse(json);
+        User user = new UserBuilder().setAge("10").setName("test65").setSex("FEMALE").setZipCode("99999").createUser();
+        User userWithRequiredFields = new UserBuilder().setAge("10").setName("test65").setZipCode("99999").createUser();
 
         postUser(user);
         int statusCode = deleteUser(userWithRequiredFields);
