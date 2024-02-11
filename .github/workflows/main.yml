@@ -1,0 +1,42 @@
+name: Final Task - Apache HttpClient Tests
+on: workflow_dispatch
+
+jobs: 
+  run_tests_job: 
+    runs-on: ubuntu-latest 
+    
+    steps:
+      - name: Deploy API image
+        run: |
+              docker pull coherentsolutions/rest-training:2.0
+              docker run -d -p 4044:8082 coherentsolutions/rest-training:2.0     
+              
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4.0.0  
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.8.2
+          
+      - name: Checkot code
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: mvn --batch-mode -DskipTests package
+
+      - name: Run Tests
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+         files: |
+          test-results/**/*.xml
+          test-results/**/*.trx
+          test-results/**/*.json
