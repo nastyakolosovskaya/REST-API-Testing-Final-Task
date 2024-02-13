@@ -41,7 +41,7 @@ public class ZipCodesTest {
     void getAllAvailableZipCodeTest() {
 
         String responseBody = getZipCodes();
-        assertTrue(responseBody.contains("ABCDE"));
+        assertTrue(responseBody.contains("23456"));
     }
 
     @Test
@@ -86,9 +86,9 @@ public class ZipCodesTest {
     @Issue("Bug #3: Duplicates are saved for POST request to /zip-codes/expand endpoint")
     void duplicationsAlreadyExistInZipCodeListTest() {
 
-        final String json = "[" + "12345" + "]";
+        final String json = "[" + "23456" + "]";
         String responseBody = postZipCodes(json);
-        int occurrences = numberOfZipCodeOccurrences(responseBody, "12345");
+        int occurrences = numberOfZipCodeOccurrences(responseBody, "23456");
         assertEquals(1, occurrences);
     }
 }
