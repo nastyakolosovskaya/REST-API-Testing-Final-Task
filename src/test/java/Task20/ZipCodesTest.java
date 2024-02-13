@@ -6,7 +6,6 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
 import io.qameta.allure.Story;
-import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import storageApp.Helpers.TokenSingleton;
@@ -14,30 +13,26 @@ import storageApp.Helpers.TokenSingleton;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ZipCodesTest {
-
     private final GetZipcodes getZipcodes = new GetZipcodes();
     private final PostZipCodes postZipCodes = new PostZipCodes();
-
     @BeforeEach
     void setup() {
         TokenSingleton.initialize();
     }
-
     @Step
     String getZipCodes() {
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        String responseBody = getZipcodes.getZipCodes();
         return responseBody;
     }
-
     @Step
     int numberOfZipCodeOccurrences(String responseBody, String sentence) {
         int occurrences = postZipCodes.numberOfOccurrences(responseBody, sentence);
         return occurrences;
     }
-
     @Step
-    void postZipCodes(String json) {
-        postZipCodes.postZipCodeResponse(json);
+    String postZipCodes(String json) {
+        String responseBody = postZipCodes.postZipCode(json);
+        return responseBody;
     }
 
     @Test
@@ -56,9 +51,7 @@ public class ZipCodesTest {
     void addZipCodeTest() {
 
         final String json = "[" + "44444" + "]";
-
-        postZipCodes(json);
-        String responseBody = getZipCodes();
+        String responseBody = postZipCodes(json);
         assertTrue(responseBody.contains("44444"));
     }
 
@@ -68,9 +61,7 @@ public class ZipCodesTest {
     void addSeveralZipCodesTest() {
 
         final String json = "[" + "11111" + "," + "2222" + "]";
-        postZipCodes(json);
-        String responseBody = getZipCodes();
-
+        String responseBody = postZipCodes(json);
         assertAll(
                 () -> assertTrue(responseBody.contains("11111")),
                 () -> assertTrue(responseBody.contains("2222"))
@@ -84,10 +75,8 @@ public class ZipCodesTest {
     void duplicateValidationInZipCodeListTest() {
 
         final String json = "[" + "31313" + "," + "31313" + "]";
-        postZipCodes(json);
-        String responseBody = getZipCodes();
-        int occurrences = postZipCodes.numberOfOccurrences(responseBody, "31313");
-
+        String responseBody = postZipCodes(json);
+        int occurrences = numberOfZipCodeOccurrences(responseBody, "31313");
         assertEquals(1, occurrences);
     }
 
@@ -97,11 +86,9 @@ public class ZipCodesTest {
     @Issue("Bug #3: Duplicates are saved for POST request to /zip-codes/expand endpoint")
     void duplicationsAlreadyExistInZipCodeListTest() {
 
-        final String json = "[" + "14141" + "]";
-        postZipCodes.postZipCodeResponse(json);
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
-        int occurrences = numberOfZipCodeOccurrences(responseBody, "14141");
-
+        final String json = "[" + "12345" + "]";
+        String responseBody = postZipCodes(json);
+        int occurrences = numberOfZipCodeOccurrences(responseBody, "12345");
         assertEquals(1, occurrences);
     }
 }

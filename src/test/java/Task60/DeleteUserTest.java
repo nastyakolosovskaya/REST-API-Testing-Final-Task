@@ -34,24 +34,24 @@ public class DeleteUserTest {
 
     @Step
     String getUser() {
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        String userResponseBody = getUser.getUsers();
         return userResponseBody;
     }
 
     @Step
     int postUser(User user) {
-        int statusCode = postUser.postUserResponse(user);
-        return statusCode;
+        int responseBody = postUser.postUser(user);
+        return responseBody;
     }
 
     int deleteUser(User user) {
-        int statusCode = deleteUser.deleteUserResponse(user);
+        int statusCode = deleteUser.deleteUser(user);
         return statusCode;
     }
 
     @Step
     String getZipCodes() {
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        String responseBody = getZipcodes.getZipCodes();
         return responseBody;
     }
 
@@ -61,7 +61,7 @@ public class DeleteUserTest {
     void deleteUserWithAllFieldsTest() {
 
         final String json = "[" + "66666" + "]";
-        postZipCodes.postZipCodeResponse(json);
+        postZipCodes.postZipCode(json);
         User user = new UserBuilder().setAge("10").setName("test60").setSex("FEMALE").setZipCode("66666").createUser();
 
         postUser(user);
@@ -80,7 +80,7 @@ public class DeleteUserTest {
     void deleteUserWithOnlyRequiredFieldsTest() {
 
         final String json = "[" + "88888" + "]";
-        postZipCodes.postZipCodeResponse(json);
+        postZipCodes.postZipCode(json);
         User user = new UserBuilder().setAge("10").setName("test62").setSex("FEMALE").setZipCode("88888").createUser();
         User userWithRequiredFields = new UserBuilder().setAge("10").setName("test62").setSex("FEMALE").createUser();
 
@@ -98,7 +98,7 @@ public class DeleteUserTest {
     void deleteUserWithoutNameTest() {
 
         final String json = "[" + "77777" + "]";
-        postZipCodes.postZipCodeResponse(json);
+        postZipCodes.postZipCode(json);
         User user = new UserBuilder().setAge("10").setName("test64").setSex("FEMALE").setZipCode("77777").createUser();
         User userWithRequiredFields = new UserBuilder().setAge("10").setSex("FEMALE").setZipCode("77777").createUser();
 
@@ -114,7 +114,7 @@ public class DeleteUserTest {
     void deleteUserWithoutSexTest() {
 
         final String json = "[" + "99999" + "]";
-        postZipCodes.postZipCodeResponse(json);
+        postZipCodes.postZipCode(json);
         User user = new UserBuilder().setAge("10").setName("test65").setSex("FEMALE").setZipCode("99999").createUser();
         User userWithRequiredFields = new UserBuilder().setAge("10").setName("test65").setZipCode("99999").createUser();
 

@@ -31,20 +31,20 @@ public class CreateUserTest {
 
     @Step
     String getZipCodes() {
-        String responseBody = getZipcodes.getZipCodesResponse(HttpStatus.SC_CREATED);
+        String responseBody = getZipcodes.getZipCodes();
         return responseBody;
     }
 
     @Step
     String getUser() {
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        String userResponseBody = getUser.getUsers();
         return userResponseBody;
     }
 
     @Step
     int postUser(User user) {
-        int statusCode = postUser.postUserResponse(user);
-        return statusCode;
+        int responseBody = postUser.postUser(user);
+        return responseBody;
     }
 
     @Test
@@ -52,12 +52,11 @@ public class CreateUserTest {
     @Story("Create User")
     void createUserWithAllFieldsTest() {
 
-        postZipCodes.postZipCodeResponse("[" + "13131" + "]");
+        postZipCodes.postZipCode("[" + "13131" + "]");
         User user = new UserBuilder().setAge("10").setName("test30").setSex("FEMALE").setZipCode("13131").createUser();
         postUser(user);
         String userResponseBody = getUser();
         String zipCodesResponseBody = getZipCodes();
-
         assertTrue(userResponseBody.contains(user.getName()));
         assertFalse(zipCodesResponseBody.contains(user.getZipCode()));
     }
@@ -70,7 +69,6 @@ public class CreateUserTest {
         User user = new UserBuilder().setAge("10").setName("test31").setSex("FEMALE").createUser();
         postUser(user);
         String userResponseBody = getUser();
-
         assertTrue(userResponseBody.contains(user.getName()));
     }
 
@@ -81,7 +79,6 @@ public class CreateUserTest {
 
         User user = new UserBuilder().setAge("10").setName("test32").setSex("FEMALE").setZipCode("21212").createUser();
         int statusCode = postUser(user);
-
         assertEquals(HttpStatus.SC_FAILED_DEPENDENCY, statusCode);
     }
 
@@ -91,12 +88,11 @@ public class CreateUserTest {
     @Issue("Bug #1 : It is possible to create user with the same name and sex")
     void createUserWithTheSameNameAndSexTest() {
 
-        postZipCodes.postZipCodeResponse("[" + "12121" + "," + "12122" + "]");
+        postZipCodes.postZipCode("[" + "12121" + "," + "12122" + "]");
         User user = new UserBuilder().setAge("10").setName("test33").setSex("FEMALE").setZipCode("12121").createUser();
         User duplicatedUser = new UserBuilder().setAge("10").setName("test33").setSex("FEMALE").setZipCode("12122").createUser();
         postUser(user);
         int statusCode = postUser(duplicatedUser);
-
         assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode);
     }
 }

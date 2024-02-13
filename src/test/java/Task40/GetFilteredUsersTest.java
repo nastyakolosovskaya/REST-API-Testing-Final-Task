@@ -24,14 +24,14 @@ public class GetFilteredUsersTest {
     }
 
     @Step
-    int postUser(User user){
-        int statusCode = postUser.postUserResponse(user);
-        return statusCode;
+    int postUser(User user) {
+        int responseBody = postUser.postUser(user);
+        return responseBody;
     }
 
     @Step
-    String getFilteredUsers(String parameter, String value){
-        String responseBody = filteredUsers.getUsersFilteredRequest(parameter, value);
+    String getFilteredUsers(String parameter, String value) {
+        String responseBody = filteredUsers.getUsersFiltered(parameter, value);
         return responseBody;
     }
 
