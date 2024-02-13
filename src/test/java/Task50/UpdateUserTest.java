@@ -61,7 +61,7 @@ public class UpdateUserTest {
     void updateUserWithPutMethodTest() {
 
         User user = new UserBuilder().setAge("20").setName("test14").setSex("FEMALE").createUser();
-        User updatedUser = new UserBuilder().setAge("21").setName("test15").setSex("MALE").setZipCode("ABCDE").createUser();
+        User updatedUser = new UserBuilder().setAge("21").setName("test15").setSex("MALE").createUser();
 
         postUser(user);
         int statusCode = putUser(user, updatedUser);
