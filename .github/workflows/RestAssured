@@ -1,0 +1,54 @@
+name: Final Task - Apache HttpClient Tests
+on: workflow_dispatch
+
+jobs: 
+  run_tests_job: 
+    runs-on: ubuntu-latest 
+    
+    steps:
+      - name: Deploy API image
+        run: |
+              docker pull coherentsolutions/rest-training:2.0
+              docker run -d -p 4044:8082 coherentsolutions/rest-training:2.0     
+              
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+        with: 
+        ref: 'Final_Task-RestAssured'
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4.0.0
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Run Test
+        if: always()
+        run: mvn package
+        continue-on-error: true
+        
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Allure Report action from marketplace
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: target/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
