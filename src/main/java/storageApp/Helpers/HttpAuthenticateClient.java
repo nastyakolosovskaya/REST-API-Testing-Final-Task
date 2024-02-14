@@ -15,6 +15,7 @@ import storageApp.Data.TokenData;
 import storageApp.Utilities.AuthenticationResponseUtility;
 
 import java.net.URI;
+
 public class HttpAuthenticateClient {
 
     @SneakyThrows

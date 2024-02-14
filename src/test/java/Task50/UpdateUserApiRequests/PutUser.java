@@ -3,55 +3,37 @@ package Task50.UpdateUserApiRequests;
 import Helpers.UpdateUsersJsonUtility;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.http.ContentType;
 import lombok.SneakyThrows;
-import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storageApp.Data.User;
 import storageApp.Helpers.PropertyReader;
 import storageApp.Helpers.TokenSingleton;
 
+import static io.restassured.RestAssured.given;
+
 public class PutUser {
 
     private final PropertyReader propertyReader = new PropertyReader();
-    static Logger logger = LoggerFactory.getLogger(PutUser.class);
-
-    public HttpPut putUserRequest(String json) {
-
-        HttpPut httpPutUser = new HttpPut(propertyReader.getProperty("basic.url") + propertyReader.getProperty("users"));
-        httpPutUser.setHeader(HttpHeaders.AUTHORIZATION, "Bearer" + TokenSingleton.getSingletonWrite());
-
-        final StringEntity entity = new StringEntity(json);
-        httpPutUser.setEntity(entity);
-        httpPutUser.setHeader("Accept", "application/json");
-        httpPutUser.setHeader("Content-type", "application/json");
-        return httpPutUser;
-    }
 
     @SneakyThrows
-    public int putUserResponse(User user, User updatedUser) {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+    public int putUser(User user, User updatedUser) {
 
-            ObjectMapper mapper = new ObjectMapper();
-            JSONObject jsonUsers = UpdateUsersJsonUtility.getJsonObject(user, updatedUser);
-            JsonNode jsonUser = mapper.readTree(String.valueOf(jsonUsers));
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject jsonUsers = UpdateUsersJsonUtility.getJsonObject(user, updatedUser);
+        JsonNode jsonUser = mapper.readTree(String.valueOf(jsonUsers));
 
-            CloseableHttpResponse response = client.execute(putUserRequest(String.valueOf(jsonUser)));
-            {
-                HttpEntity entity = response.getEntity();
-                String responseBody = EntityUtils.toString(entity);
-                logger.info(responseBody);
-                int statusCode = response.getCode();
-                return statusCode;
-            }
-        }
+             int response = (given()
+                .baseUri(propertyReader.getProperty("basic.url"))
+                .body(jsonUser)
+                .when()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer" + TokenSingleton.getSingletonWrite())
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .put(propertyReader.getProperty("users"))
+                .then().log().all()
+                .extract().statusCode());
+        return response;
     }
 }

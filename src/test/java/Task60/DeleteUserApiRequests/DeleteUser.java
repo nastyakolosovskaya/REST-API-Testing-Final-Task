@@ -1,48 +1,34 @@
 package Task60.DeleteUserApiRequests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.http.ContentType;
 import lombok.SneakyThrows;
-import org.apache.hc.client5.http.classic.methods.HttpDelete;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storageApp.Data.User;
 import storageApp.Helpers.PropertyReader;
 import storageApp.Helpers.TokenSingleton;
 
+import static io.restassured.RestAssured.given;
+
 public class DeleteUser {
 
     private final PropertyReader propertyReader = new PropertyReader();
-    static Logger logger = LoggerFactory.getLogger(DeleteUser.class);
-
-    public HttpDelete deleteUserRequest(String json) {
-
-        HttpDelete httpDeleteUser = new HttpDelete(propertyReader.getProperty("basic.url") + propertyReader.getProperty("users"));
-        httpDeleteUser.setHeader(HttpHeaders.AUTHORIZATION, "Bearer" + TokenSingleton.getSingletonWrite());
-
-        final StringEntity entity = new StringEntity(json);
-        httpDeleteUser.setEntity(entity);
-        httpDeleteUser.setHeader("Accept", "application/json");
-        httpDeleteUser.setHeader("Content-type", "application/json");
-        return httpDeleteUser;
-    }
-
     @SneakyThrows
-    public int deleteUserResponse(User user) {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
+    public int deleteUser(User user) {
 
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(user);
-            CloseableHttpResponse response = client.execute(deleteUserRequest(jsonString));
-            {
-                logger.info(String.valueOf(response));
-                int statusCode = response.getCode();
-                return statusCode;
-            }
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(user);
+
+        int response = (given()
+                .baseUri(propertyReader.getProperty("basic.url"))
+                .body(jsonString)
+                .when()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer" + TokenSingleton.getSingletonWrite())
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .delete(propertyReader.getProperty("users"))
+                .then().log().all()
+                .extract().statusCode());
+        return response;
     }
 }

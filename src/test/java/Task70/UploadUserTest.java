@@ -26,13 +26,13 @@ public class UploadUserTest {
 
     @Step
     String getUser() {
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        String userResponseBody = getUser.getUsers();
         return userResponseBody;
     }
 
     @Step
     int uploadUser(String filePath) {
-        int statusCode = uploadUser.postUserUploadResponse("jsonFileValid");
+        int statusCode = uploadUser.postUserUpload("jsonFileValid");
         return statusCode;
     }
 

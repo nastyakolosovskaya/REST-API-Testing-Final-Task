@@ -33,25 +33,25 @@ public class UpdateUserTest {
 
     @Step
     int postUser(User user) {
-        int statusCode = postUser.postUserResponse(user);
-        return statusCode;
+        int responseBody = postUser.postUser(user);
+        return responseBody;
     }
 
     @Step
     int putUser(User user, User updatedUser) {
-        int statusCode = putUser.putUserResponse(user, updatedUser);
+        int statusCode = putUser.putUser(user, updatedUser);
         return statusCode;
     }
 
     @Step
     int patchUser(User user, User updatedUser) {
-        int statusCode = patchUser.patchUserResponse(user, updatedUser);
+        int statusCode = patchUser.patchUser(user, updatedUser);
         return statusCode;
     }
 
     @Step
     String getUser() {
-        String userResponseBody = getUser.getUserResponse(HttpStatus.SC_OK);
+        String userResponseBody = getUser.getUsers();
         return userResponseBody;
     }
 
@@ -81,7 +81,7 @@ public class UpdateUserTest {
     void updateUserWithPatchMethodTest() {
 
         final String json = "[" + "55555" + "]";
-        postZipCodes.postZipCodeResponse(json);
+        postZipCodes.postZipCode(json);
 
         User user = new UserBuilder().setAge("30").setName("test16").setSex("MALE").setZipCode("55555").createUser();
         User updatedUser = new UserBuilder().setAge("31").setName("test17").setSex("FEMALE").setZipCode("55555").createUser();
